@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration
+PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+	<context id="mysql" targetRuntime="MyBatis3Simple"
+		defaultModelType="flat">
+		<!-- 注释生成器 -->
+		<commentGenerator>
+			<property name="suppressAllComments" value="false" />
+			<property name="suppressDate" value="true" />
+		</commentGenerator>
+
+		<!-- 数据库连接相关信息 -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/test" userId="root"
+			password="root">
+		</jdbcConnection>
+
+		<!-- Java类型解析 -->
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<!-- 指定实体生成的位置 -->
+		<javaModelGenerator targetPackage="com.demo.entity"
+			targetProject="src\main\java">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<!-- 指定映射文件生成的位置 -->
+		<sqlMapGenerator targetPackage="mapper" targetProject="src\main\resources">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<!-- 映射信息对应的接口生成位置 -->
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.demo.dao" targetProject="src\main\java">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+		<!-- 定义表以及生成的实体类、dao类、映射文件等信息 -->
+		<table tableName="tb_users" domainObjectName="User" mapperName="IUserMapper" />
+		<table tableName="tb_roles" domainObjectName="Role" mapperName="IRoleMapper" />
+		<table tableName="tb_functions" domainObjectName="Function"
+			mapperName="IFunctionMapper" />
+		<table tableName="tb_user_role" domainObjectName="UserRole"
+			mapperName="IUserRoleMapper" />
+		<table tableName="tb_role_function" domainObjectName="RoleFunction"
+			mapperName="IRoleFunctionMapper" />
+	</context>
+</generatorConfiguration>
