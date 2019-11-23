@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<base href="<%=basePath%>">
+	<meta charset="utf-8">
+<title>菜单权限管理页面</title>
+	<link href="/easyui/themes/insdep/easyui.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/insdep/easyui_animation.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/insdep/easyui_plus.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/insdep/insdep_theme_default.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/insdep/icon.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/color.css" rel="stylesheet" type="text/css">
+	<link href="/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css" >
+	<link href="/css/common.css" rel="stylesheet" type="text/css" >
+	<script type="text/javascript" src="/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/easyui/themes/insdep/jquery.insdep-extend.min.js"></script>
+	<script type="text/javascript" src="/ztree/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="/easyui/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="/kindeditor/kindeditor-all-min.js"></script>
+</head>
+<body>
+	<div id="toolbar">
+		<a href="javascript:void(0);" onclick="return add('toAddPerm.do')"
+			class="easyui-linkbutton"
+			data-options="iconCls:'icon-add',plain:true">添加</a> <a
+			href="javascript:void(0);"
+			onclick="return del('delPermById.do')"
+			class="easyui-linkbutton"
+			data-options="iconCls:'icon-remove',plain:true">删除</a> <a
+			href="javascript:void(0);"
+			onclick="return edit('updatePerm.do');"
+			id="editBtn" class="easyui-linkbutton"
+			data-options="iconCls:'icon-edit',plain:true">修改</a>
+	</div>
+	<table id="dt"></table>
+
+	<script type="text/javascript">
+		$(function () {
+			$("#dt").datagrid({
+				toolbar : "#toolbar",
+				url : "findFunctionList.do",
+				rownumbers:true,
+				fitColumns:true,
+				checkbox : true,
+				idField : "func_id",
+				treeField: "func_name",
+				cascadeCheck : false,
+				singleSelect : false,
+				columns:[
+					[
+						{field:'func_name', align:"center", title:"权限名称",width:20},
+					    {field:"func_type",align:"center",title:"权限类型",width:5,formatter:function(value,rowData,index){
+										if(value == 1){
+												return "菜单";
+									}else if(value == 0){
+										return "按钮";
+									}else{
+												return "其他";
+										}
+								}},
+						{field:'func_url', align:"center", title:"权限URL",width:20},
+						{field:'create_time', align:"center", title:"创建时间",width:20},
+						{field:"status", align:"center",title:"权限状态",formatter:function(value,rowData,index){
+								if(value == 1){
+									return "可用";
+								}else if(value == 0){
+									return "禁用";
+								}else if(value == 2){
+									return "已删除";
+								}else{
+									return "";
+								}
+							}}
+					]
+				],
+				loadFilter:function(data){//"_parentId"
+					if(data && data.data){
+						$.each(data.data ,function(index,obj){
+							if(obj.parentId){
+								data.data[index]._parentId = obj.parent_id;
+							}
+						});
+						return {"rows":data.data};
+					}
+					return null;
+				}
+			});
+		});
+		//添加权限菜单
+		function add(url){
+			//获取父id在选中的父id下面添加子菜单
+			var rows = $("#dt").treegrid("getCheckedNodes");
+			if(rows.length != 1){
+				$.messager.alert("警告","请选择一个父节点！");
+				return;
+			}
+			var parentId = rows[0].parent_id; //获取父节点的id的值
+			//调用父页面的弹出页面的方法
+			parent.openTopWindow({
+				width:700,
+				height:500,
+				title:"添加菜单权限",
+				url:url + "?parentId="+ parentId,
+				close:function(){
+					$("#dt").treegrid("reload");
+				}
+			});
+		}
+	</script>
+
+<!--	<script type="text/javascript">-->
+<!--		$(function(){-->
+<!--			$("#dataList").treegrid({-->
+<!--				url : "findFunctionList.do",-->
+<!--				fitColumns : true,-->
+<!--				idField : "funcId",-->
+<!--				treeField: "funcName",-->
+<!--				rownumbers : true,-->
+<!--				toolbar : "#toolbar",-->
+<!--				checkbox : true,-->
+<!--				singleSelect : false,-->
+<!--				cascadeCheck : false,-->
+<!--				columns : [[-->
+<!--					{field:"funcName",title:"权限名称",sortable:true,width:10},-->
+<!--					{field:"funcType",title:"权限类型",width:5,formatter:function(value,rowData,index){-->
+<!--							if(value == 1){-->
+<!--								return "菜单";-->
+<!--							}else if(value == 0){-->
+<!--								return "按钮";-->
+<!--							}else{-->
+<!--								return "其他";-->
+<!--							}-->
+<!--						}},-->
+<!--					{field:"funcUrl",title:"权限URL",width:10},-->
+<!--					{field:"createTime",title:"创建时间",width:10},-->
+<!--					{field:"updateTime",title:"更新时间",width:10},-->
+<!--					{field:"status",title:"权限状态",formatter:function(value,rowData,index){-->
+<!--							if(value == 1){-->
+<!--								return "可用";-->
+<!--							}else if(value == 0){-->
+<!--								return "禁用";-->
+<!--							}else if(value == 2){-->
+<!--								return "已删除";-->
+<!--							}else{-->
+<!--								return "";-->
+<!--							}-->
+<!--						}}-->
+<!--				]],-->
+<!--				loadFilter:function(data){//"_parentId"-->
+<!--					if(data && data.data){-->
+<!--						$.each(data.data ,function(index,obj){-->
+<!--							if(obj.parentId){-->
+<!--								data.data[index]._parentId = obj.parentId;-->
+<!--							}-->
+<!--						});-->
+<!--						return {"rows":data.data};-->
+<!--					}-->
+<!--					return null;-->
+<!--				}-->
+<!--			});-->
+<!--		});-->
+<!--		//添加权限菜单-->
+<!--		function add(url){-->
+<!--			//获取父id在选中的父id下面添加子菜单-->
+<!--			var rows = $("#dataList").treegrid("getCheckedNodes");-->
+<!--			if(rows.length != 1){-->
+<!--				$.messager.alert("警告","请选择一个父节点！");-->
+<!--				return;-->
+<!--			}-->
+<!--			var parentId = rows[0].funcId; //获取父节点的id的值-->
+<!--			//调用父页面的弹出页面的方法-->
+<!--			parent.openTopWindow({-->
+<!--				width:700,-->
+<!--				height:500,-->
+<!--				title:"添加菜单权限",-->
+<!--				url:url + "?parentId="+ parentId,-->
+<!--				close:function(){-->
+<!--					$("#dataList").treegrid("reload");-->
+<!--				}-->
+<!--			});-->
+<!--		}-->
+<!--		function del(url){-->
+<!--			//获取父id在选中的父id下面添加子菜单-->
+<!--			var rows = $("#dataList").treegrid("getCheckedNodes");-->
+<!--			if(rows.length <= 0){-->
+<!--				$.messager.alert("警告","请至少选择一个节点！");-->
+<!--				return;-->
+<!--			}-->
+<!--			//跟节点原则上时不能删除的，删除父节点的原则是，先删除子节点再删除父节点-->
+<!--			var ids = new Array();-->
+<!--			$.each(rows,function(index,obj){-->
+<!--				ids.push(obj.funcId);-->
+<!--			});-->
+<!--			ids = ids.join(",");-->
+<!--			//删除功能-->
+<!--			$.get(-->
+<!--					url,-->
+<!--					{"ids":ids},-->
+<!--					function(data){-->
+<!--						alert(data.msg);-->
+<!--						if(data.success){-->
+<!--							$("#dataList").treegrid("reload");-->
+<!--						}-->
+<!--					},-->
+<!--					"json"-->
+<!--			);-->
+<!--		}-->
+<!--		function edit(url){-->
+<!--			var rows = $("#dataList").treegrid("getCheckedNodes");-->
+<!--			if(rows.length != 1){-->
+<!--				$.messager.alert("警告","请选择一个节点！");-->
+<!--				return;-->
+<!--			}-->
+<!--			var id = rows[0].funcId; //获取父节点的id的值-->
+<!--			//调用父页面的弹出页面的方法-->
+<!--			parent.openTopWindow({-->
+<!--				width:700,-->
+<!--				height:500,-->
+<!--				title:"修改菜单权限",-->
+<!--				url:url + "?id="+ id,-->
+<!--				close:function(){-->
+<!--					$("#dataList").treegrid("reload");-->
+<!--				}-->
+<!--			});-->
+<!--		}-->
+<!--	</script>-->
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <base href="<%=basePath%>">
+    <meta charset="utf-8">
+    <title>角色管理页面</title>
+    <link href="/easyui/themes/insdep/easyui.css" rel="stylesheet" type="text/css">
+    <link href="/easyui/themes/insdep/easyui_animation.css" rel="stylesheet" type="text/css">
+    <link href="/easyui/themes/insdep/easyui_plus.css" rel="stylesheet" type="text/css">
+    <link href="/easyui/themes/insdep/insdep_theme_default.css" rel="stylesheet" type="text/css">
+    <link href="/easyui/themes/insdep/icon.css" rel="stylesheet" type="text/css">
+    <link href="/easyui/themes/color.css" rel="stylesheet" type="text/css">
+    <link href="/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css" >
+    <link href="/css/common.css" rel="stylesheet" type="text/css" >
+    <script type="text/javascript" src="/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/easyui/themes/insdep/jquery.insdep-extend.min.js"></script>
+    <script type="text/javascript" src="/ztree/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/kindeditor/kindeditor-all-min.js"></script>
+</head>
+<body>
+<div id="toolbar">
+    <a href="javascript:void(0);" onclick="return add('addRole.do')"
+       class="easyui-linkbutton"
+       data-options="iconCls:'icon-add',plain:true">添加</a> <a
+        href="javascript:void(0);"
+        onclick="return del('delRole.do')"
+        class="easyui-linkbutton"
+        data-options="iconCls:'icon-remove',plain:true">删除</a> <a
+        href="javascript:void(0);"
+        onclick="return edit('updateRole.do');"
+        id="editBtn" class="easyui-linkbutton"
+        data-options="iconCls:'icon-edit',plain:true">修改</a> <a
+        href="javascript:void(0);"
+        onclick="return addPerm('addPerm.do')"
+        id="setBtn" class="easyui-linkbutton"
+        data-options="iconCls:'icon-man',plain:true">授权</a>
+</div>
+<table id="bg"></table>
+<script type="text/javascript">
+    $(function () {
+        $("#bg").datagrid({
+            toolbar : "#toolbar",
+            url : "findRoleByPage.do",
+            rownumbers:true,
+            fitColumns:true,
+            pagination:true,
+            idField : "role_id",
+            singleSelect:true,
+            columns:[
+                [
+                    {field:"role_id", align:"center",title:"选择",checkbox:true},
+                    {field:'role_name', align:"center", title:"角色名",width:20},
+                    {field:'note', align:"center", title:"备注信息",width:20},
+                    {field:'create_time', align:"center", title:"创建时间",width:20},
+                    {field:'update_time', align:"center", title:"修改时间",width:20},
+                    {field:"status", align:"center",title:"用户状态",formatter:function(value,rowData,index){
+                            if(value == 1){
+                                return "可用";
+                            }else if(value == 0){
+                                return "禁用";
+                            }else if(value == 2){
+                                return "已删除";
+                            }else{
+                                return "";
+                            }
+                        }}
+                ]
+            ],
+            loadFilter:function(data){
+                //data是服务器返回的数据,将服务器端返回的数据转换为datagrid需要的格式
+                return {"total":data.total,"rows":data.rows};
+            }
+        });
+    });
+//权限配置弹出框
+    function addPerm(url){
+        var rows = $("#bg").datagrid("getChecked");
+        if(rows.length != 1){
+            $.messager.alert("警告","必须选中一个角色！");
+            return;
+        }
+        var roleId = rows[0].role_id;
+        //调用父页面的弹出页面的方法
+        parent.openTopWindow({
+            width:700,
+            height:500,
+            title:"分配角色",
+            url:url+"?id="+roleId,
+            close:function(){
+                $("#roleList").datagrid("reload");
+            },
+            isScrolling:"yes"
+        });
+    }
+</script>
+</body>
+</html>

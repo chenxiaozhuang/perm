@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<base href="<%=basePath%>">
+	<meta charset="utf-8">
+<title>部门管理</title>
+	<link href="/easyui/themes/insdep/easyui.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/insdep/easyui_animation.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/insdep/easyui_plus.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/insdep/insdep_theme_default.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/insdep/icon.css" rel="stylesheet" type="text/css">
+	<link href="/easyui/themes/color.css" rel="stylesheet" type="text/css">
+	<link href="/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css" >
+	<link href="/css/common.css" rel="stylesheet" type="text/css" >
+	<script type="text/javascript" src="/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/easyui/themes/insdep/jquery.insdep-extend.min.js"></script>
+	<script type="text/javascript" src="/ztree/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="/easyui/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="/kindeditor/kindeditor-all-min.js"></script>
+</head>
+<body>
+	<div id="toolbar">
+		<a href="javascript:void(0);" onclick="return add('toAddPerm.do')"
+			class="easyui-linkbutton"
+			data-options="iconCls:'icon-add',plain:true">添加</a> <a
+			href="javascript:void(0);"
+			onclick="return del('delPermById.do')"
+			class="easyui-linkbutton"
+			data-options="iconCls:'icon-remove',plain:true">删除</a> <a
+			href="javascript:void(0);"
+			onclick="return edit('updatePerm.do');"
+			id="editBtn" class="easyui-linkbutton"
+			data-options="iconCls:'icon-edit',plain:true">修改</a>
+	</div>
+	<table id="department"></table>
+
+</body>
+</html>
